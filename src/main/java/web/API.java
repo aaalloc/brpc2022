@@ -2,39 +2,49 @@ package web;
 
 import utilities.StreamGobbler;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
- * Let the controll of the API Endpoint made with Python.
+ * Let the control of the API Endpoints made with Python.
  */
-public class API  {
-    Process process;
+public abstract class API  {
+    public static Process process;
 
-    public API(){
-
-    }
-
-    public void startServer() throws InterruptedException, IOException {
-
+    /**
+     * Start the server through executing a command through a terminal.
+     * @throws IOException
+     */
+    public static void start() throws IOException, InterruptedException {
         ProcessBuilder builder = new ProcessBuilder();
-
         builder.command("cmd.exe", "/c", "endpoints --prefix=controllers --host=localhost:8000");
         builder.directory(new File("./src/main/python/src/"));
 
         process = builder.start();
         System.out.println(process.pid());
-        /*
         StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
         Executors.newSingleThreadExecutor().submit(streamGobbler);
-        */
     }
 
-    public void stop(){
+    /**
+     * Shutdown the server through a simple open connection
+     */
+    public static void close() {
+        String url = "http://localhost:8000/exit";
+        try{
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            // we don't try to receive any HTTP response since the server has been shutdown.
+            con.disconnect();
+        }
+        catch(Exception exception) {
+            exception.printStackTrace();
+        }
         process.destroy();
+        System.exit(0);
     }
+
 
 }

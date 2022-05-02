@@ -1,4 +1,8 @@
 from endpoints import Controller
+from endpoints.interface import BaseServer
+import sys
+import atexit
+import signal, os
 
 class Default(Controller):
     def GET(self):
@@ -9,4 +13,9 @@ class Default(Controller):
 
 class Foo(Controller):
     def GET(self):
-        return "bang"
+        return "banzg"
+
+class Exit(Controller):
+
+    def GET(self):
+        return os.kill(os.getpid(), signal.SIGTERM)
