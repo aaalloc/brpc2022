@@ -4,8 +4,18 @@ import utilities.StreamGobbler;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.Scanner;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Let the control of the API Endpoints made with Python.
@@ -26,25 +36,31 @@ public abstract class API  {
         System.out.println(process.pid());
         StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
         Executors.newSingleThreadExecutor().submit(streamGobbler);
+        TimeUnit.SECONDS.sleep(2);
     }
 
     /**
      * Shutdown the server through a simple open connection
      */
-    public static void close() {
-        String url = "http://localhost:8000/exit";
-        try{
-            URL obj = new URL(url);
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-            // we don't try to receive any HTTP response since the server has been shutdown.
-            con.disconnect();
-        }
-        catch(Exception exception) {
-            exception.printStackTrace();
-        }
+    public static void close() throws IOException {
+        System.out.println(fetchData("/exit"));
         process.destroy();
         System.exit(0);
     }
 
-
+    public static String fetchData(String element) throws IOException {
+        String urlToRead = "http://localhost:8000" + element;
+        StringBuilder result = new StringBuilder();
+        URL url = new URL(urlToRead);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(conn.getInputStream()))) {
+            for (String line; (line = reader.readLine()) != null; ) {
+                result.append(line);
+            }
+        }
+        conn.disconnect();
+        return result.toString();
+    }
 }
