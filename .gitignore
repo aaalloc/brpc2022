@@ -1,0 +1,4 @@
+/.gradle/
+/.idea/
+/src/main/python/python.iml
+/build/
