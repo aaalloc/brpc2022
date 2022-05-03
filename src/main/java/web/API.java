@@ -4,18 +4,9 @@ import utilities.StreamGobbler;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Let the control of the API Endpoints made with Python.
