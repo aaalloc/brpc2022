@@ -7,30 +7,38 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server {
-    public boolean onRun;
-    public String fromClient;
-    public String toClient;
-    public final int port = 8080;
-    public ServerSocket server;
+public abstract class Server {
+    private static boolean onRun;
+    public static final int port = 8080;
+    private static ServerSocket server;
 
 
     public Server() throws IOException {
         server =  new ServerSocket(port);
     }
 
-    public void start() throws IOException {
+    public static void start() throws IOException {
         onRun = true;
+
+        //wait connection from the python script
+        Socket client = server.accept();
+        System.out.println("got connection on port " + client.getLocalPort() + "\n");
+
+
         while(onRun){
-            Socket client = server.accept();
-            System.out.println("got connection on port " + client.getLocalPort());
             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             PrintWriter out = new PrintWriter(client.getOutputStream(),true);
 
-            fromClient = in.readLine();
-            System.out.println("received : " + fromClient +"\n");
+            String fromClient = in.readLine();
+            System.out.println("received from " + client.getLocalAddress() + " : " + fromClient);
 
-            toClient = "received!";
+            String toClient;
+            if(fromClient.equals("stop")){
+                toClient = "closed";
+            }
+            else{
+                toClient = "packet received";
+            }
             out.println(toClient);
 
             if(fromClient.equals("stop"))
@@ -38,9 +46,10 @@ public class Server {
         }
     }
 
-    private void stop(Socket client) throws IOException {
+    public static void stop(Socket client) throws IOException {
         client.close();
-        System.out.println("closed");
+        server.close();
+        System.out.println("\nserver closed");
         onRun = false;
         System.exit(0);
     }
