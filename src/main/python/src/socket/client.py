@@ -1,3 +1,4 @@
+import json
 import socket
 import sys
 
@@ -21,8 +22,9 @@ if s is None:
     sys.exit(1)
 with s:
     while True:
-        value = input("Enter your value: ") + "\n"
-        s.sendall(value.encode())
+        file = open('data.json')
+        data_json = json.load(file)
+        s.sendall(json.dumps(data_json).encode('utf-8') + "\n".encode())
         data = s.recv(1024)
         if data == b'closed\r\n':
             print("Server is closed")
