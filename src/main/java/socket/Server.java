@@ -1,27 +1,21 @@
 package socket;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.TimeUnit;
 
 public class Server {
     private boolean onRun;
     public final int port = 8080;
     private final ServerSocket server;
 
-
     public Server() throws IOException {
         server =  new ServerSocket(port);
     }
 
-    public void start() throws IOException, InterruptedException {
+    public void start() throws IOException {
         onRun =true;
 
         //wait connection from the python script
@@ -36,28 +30,21 @@ public class Server {
 
             String fromClient = in.readLine();
             System.out.println("received from " + client.getLocalAddress() + " : " + fromClient);
-            String endOfFile = Character.toString(fromClient.charAt(fromClient.length() - 1));
+            String endOfFile = Character.toString(fromClient.charAt(fromClient.length() - 1)); // needs to be ]
 
-            String toClient;
-            if(fromClient.contains(endOfFile)){
-                toClient = "closed";
-            }
-            else{
-                toClient = "packet received";
-            }
+            String toClient = fromClient.contains(endOfFile) ? "closed" : "packet received from server";
+
             out.println(toClient);
             if(fromClient.contains(endOfFile))
                 stop(client);
         }
     }
 
-    public void stop(Socket client) throws IOException, InterruptedException {
+    public void stop(Socket client) throws IOException {
         client.close();
         server.close();
         System.out.println("\nserver closed");
         onRun = false;
-
-        System.exit(0);
     }
 
 }
