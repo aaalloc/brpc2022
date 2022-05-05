@@ -7,18 +7,18 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public abstract class Server {
-    private static boolean onRun;
-    public static final int port = 8080;
-    private static ServerSocket server;
+public class Server {
+    private boolean onRun;
+    public final int port = 8080;
+    private final ServerSocket server;
 
 
     public Server() throws IOException {
         server =  new ServerSocket(port);
     }
 
-    public static void start() throws IOException {
-        onRun = true;
+    public void start() throws IOException {
+        onRun =true;
 
         //wait connection from the python script
         Socket client = server.accept();
@@ -46,7 +46,7 @@ public abstract class Server {
         }
     }
 
-    public static void stop(Socket client) throws IOException {
+    public void stop(Socket client) throws IOException {
         client.close();
         server.close();
         System.out.println("\nserver closed");
