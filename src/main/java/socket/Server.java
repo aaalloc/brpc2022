@@ -10,8 +10,11 @@ public class Server {
     private boolean onRun;
     public final int port = 8080;
     private final ServerSocket server;
+    public String endOfFile;
 
-    public Server() throws IOException {
+    public Server(String endOfFile) throws IOException
+    {
+        this.endOfFile = endOfFile;
         server =  new ServerSocket(port);
     }
 
@@ -22,20 +25,20 @@ public class Server {
         Socket client = server.accept();
         System.out.println("got connection on port " + client.getLocalPort() + "\n");
 
-
-        while(onRun){
-
+        while(onRun)
+        {
             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             PrintWriter out = new PrintWriter(client.getOutputStream(),true);
 
             String fromClient = in.readLine();
             System.out.println("received from " + client.getLocalAddress() + " : " + fromClient);
-            String endOfFile = Character.toString(fromClient.charAt(fromClient.length() - 1)); // needs to be ]
 
-            String toClient = fromClient.contains(endOfFile) ? "closed" : "packet received from server";
+            boolean hasReachedEndOfFile = fromClient.endsWith(endOfFile);
+            String toClient = hasReachedEndOfFile ? "closed" : "packet received from server";
 
             out.println(toClient);
-            if(fromClient.contains(endOfFile))
+
+            if(hasReachedEndOfFile)
                 stop(client);
         }
     }
