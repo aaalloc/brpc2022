@@ -13,7 +13,7 @@ public class Demo { // need to change the name in the future, to abstract ...
         System.out.println(API.fetchData(""));
         API.close();
          */
-        Server serv = new Server();
+        Server serv = new Server("]");
         serv.start();
     }
 }
