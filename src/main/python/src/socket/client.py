@@ -26,6 +26,8 @@ with s:
         data_json = json.load(file)
         s.sendall(json.dumps(data_json).encode('utf-8') + "\n".encode())
         data = s.recv(1024)
+        s.sendall("end\n".encode())
+        data = s.recv(1024)
         if data == b'closed\r\n':
             print("Server is closed")
             s.close()
