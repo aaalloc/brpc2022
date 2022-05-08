@@ -7,7 +7,6 @@ public class Demo { // need to change the name in the future, to abstract ...
 
         while(serv.dataFromClient().getClientState()){
             String data = serv.dataFromClient().getData();
-            System.out.println(data);
             // do beep bepp things
             // .....
 
