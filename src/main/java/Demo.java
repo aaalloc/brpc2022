@@ -1,24 +1,17 @@
 import socket.Server;
-import java.io.IOException;
-
-
 
 public class Demo { // need to change the name in the future, to abstract ...
-    public static void main(String[] args) throws IOException {
-        Server serv = new Server("end");
+    public static void main(String[] args){
+        Server serv = new Server(8080,"end");
         serv.waitConnection();
 
-        Boolean isFinished = true;
-
-        while(isFinished){
-            String data = serv.receivedData().getKey();
+        while(serv.dataFromClient().getClientState()){
+            String data = serv.dataFromClient().getData();
             System.out.println(data);
             // do beep bepp things
             // .....
 
-            isFinished = serv.receivedData().getValue();
         }
-
         System.out.println("end of loop");
     }
 }
