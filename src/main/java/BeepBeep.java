@@ -1,4 +1,3 @@
-import ca.uqac.lif.cep.Connector;
 import ca.uqac.lif.cep.Pullable;
 import ca.uqac.lif.cep.json.ParseJson;
 import ca.uqac.lif.cep.tmf.QueueSource;
@@ -20,21 +19,14 @@ public class BeepBeep
         //Connector.connect(queueSource,
     }
 
-    public void startProcessing() throws IOException
+    public void process()
     {
         isProcessing = true;
         Pullable p = queueSource.getPullableOutput();
 
-        System.out.println("Starting processing");
-        while (isProcessing)
-        {
-            for (Object o : p) {
-                JsonMap jMap = (JsonMap) o;
-                double speed = getSpeedFromJson(jMap);
-                System.out.println(speed);
-            }
-        }
-
+        JsonMap jMap = (JsonMap) p.pull();
+        double speed = getSpeedFromJson(jMap);
+        System.out.println(speed);
     }
 
     public double getSpeedFromJson(JsonMap jMap)
