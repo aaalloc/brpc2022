@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class BeepBeep
 {
-    private final QueueSource queueSource;
+    private QueueSource queueSource;
     private QueueSource queueSource2;
     private boolean isProcessing;
     private final ApplyFunction maxFunction;
@@ -41,6 +41,7 @@ public class BeepBeep
         float maxSpeed  = (float) p.pull();
 
         queueSource2 = new QueueSource();
+        Connector.connect(queueSource2, 0, maxFunction, 1);
         queueSource2.addEvent(maxSpeed);
 
         System.out.println(queueSource.printState().toString());
@@ -69,8 +70,13 @@ public class BeepBeep
     public void addToQueue(String s)
     {
         JsonMap jMap = parseJson(s);
-        System.out.println("Added to queue: " + jMap.toString());
+        //System.out.println("Added to queue: " + jMap.toString());
         float speed = getSpeedFromJson(jMap);
+
+        queueSource = new QueueSource();
+        Connector.connect(queueSource, 0, maxFunction, 0);
+
+
         queueSource.addEvent(speed);
         if (!this.hasFilledSecondQueue)
         {
