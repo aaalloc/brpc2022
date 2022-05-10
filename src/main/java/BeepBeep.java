@@ -1,6 +1,10 @@
+import ca.uqac.lif.cep.Connector;
 import ca.uqac.lif.cep.Pullable;
+import ca.uqac.lif.cep.functions.ApplyFunction;
+import ca.uqac.lif.cep.functions.Function;
 import ca.uqac.lif.cep.json.ParseJson;
 import ca.uqac.lif.cep.tmf.QueueSource;
+import ca.uqac.lif.cep.util.Numbers;
 import ca.uqac.lif.json.JsonElement;
 import ca.uqac.lif.json.JsonMap;
 
@@ -9,30 +13,47 @@ import java.io.IOException;
 public class BeepBeep
 {
     private final QueueSource queueSource;
+    private QueueSource queueSource2;
     private boolean isProcessing;
+    private final ApplyFunction maxFunction;
+    private boolean hasFilledSecondQueue = false;
 
     public BeepBeep()
     {
         System.out.println("Instantiating BeepBeep process");
         this.isProcessing = false;
         this.queueSource = new QueueSource();
-        //Connector.connect(queueSource,
+        this.queueSource2 = new QueueSource();
+
+        maxFunction = new ApplyFunction(Numbers.maximum);
+        //Object[] outs = new Object[1];
+        //maxFunction.evaluate(new Object[}{}]);
+        Connector.connect(queueSource, 0, maxFunction, 0);
+        Connector.connect(queueSource2, 0, maxFunction, 1);
     }
 
     public void process()
     {
         isProcessing = true;
-        Pullable p = queueSource.getPullableOutput();
+        Pullable p = maxFunction.getPullableOutput();
 
-        JsonMap jMap = (JsonMap) p.pull();
-        double speed = getSpeedFromJson(jMap);
-        System.out.println(speed);
+        //JsonMap jMap = (JsonMap) p.pull();
+        float maxSpeed  = (float) p.pull();
+
+        queueSource2 = new QueueSource();
+        queueSource2.addEvent(maxSpeed);
+
+        System.out.println(queueSource.printState().toString());
+        System.out.println(queueSource2.printState().toString());
+        this.hasFilledSecondQueue = true;
+
+        //System.out.println("Max:" + maxSpeed);
     }
 
-    public double getSpeedFromJson(JsonMap jMap)
+    public float getSpeedFromJson(JsonMap jMap)
     {
         JsonMap jMap2 = (JsonMap) jMap.get("electrics");
-        return Double.parseDouble(jMap2.get("rpm").toString());
+        return Float.parseFloat(jMap2.get("rpm").toString());
     }
 
     public void setEvents(String... queue)
@@ -49,7 +70,12 @@ public class BeepBeep
     {
         JsonMap jMap = parseJson(s);
         System.out.println("Added to queue: " + jMap.toString());
-        queueSource.addEvent(jMap);
+        float speed = getSpeedFromJson(jMap);
+        queueSource.addEvent(speed);
+        if (!this.hasFilledSecondQueue)
+        {
+            queueSource2.addEvent(speed);
+        }
     }
 
     public JsonMap parseJson(String jsonToParse)
