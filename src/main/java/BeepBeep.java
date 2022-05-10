@@ -7,6 +7,7 @@ import ca.uqac.lif.cep.tmf.QueueSource;
 import ca.uqac.lif.cep.util.Numbers;
 import ca.uqac.lif.json.JsonElement;
 import ca.uqac.lif.json.JsonMap;
+import ca.uqac.lif.json.JsonPath;
 
 import java.io.IOException;
 
@@ -26,8 +27,6 @@ public class BeepBeep
         this.queueSource2 = new QueueSource();
 
         maxFunction = new ApplyFunction(Numbers.maximum);
-        //Object[] outs = new Object[1];
-        //maxFunction.evaluate(new Object[}{}]);
         Connector.connect(queueSource, 0, maxFunction, 0);
         Connector.connect(queueSource2, 0, maxFunction, 1);
     }
@@ -53,8 +52,8 @@ public class BeepBeep
 
     public float getSpeedFromJson(JsonMap jMap)
     {
-        JsonMap jMap2 = (JsonMap) jMap.get("electrics");
-        return Float.parseFloat(jMap2.get("rpm").toString());
+        String rpmString = JsonPath.get(jMap, "electrics.rpm").toString();
+        return Float.parseFloat(rpmString);
     }
 
     public void setEvents(String... queue)
