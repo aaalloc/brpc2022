@@ -13,7 +13,7 @@ public class Demo { // need to change the name in the future, to abstract ...
         {
             String data = serv.dataFromClient().getData();
             bb.addToQueue(data);
-            bb.printMaxSpeed();
+            //bb.printMaxSpeed();
         }
         System.out.println("end of loop");
     }

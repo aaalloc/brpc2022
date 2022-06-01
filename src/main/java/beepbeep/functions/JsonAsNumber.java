@@ -1,4 +1,4 @@
-package beepbeep;
+package beepbeep.functions;
 
 import ca.uqac.lif.cep.functions.BinaryFunction;
 import ca.uqac.lif.json.*;
