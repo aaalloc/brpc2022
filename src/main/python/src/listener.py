@@ -1,16 +1,16 @@
 import argparse
 import pathlib
-import pickle
 import subprocess
 import sys
 import time
-
+import logging
 
 from utils.server.Client import Client
 # Import needed even if some import is not explicitly used
 from beamngpy import BeamNGpy, Vehicle, Scenario
 from beamngpy.sensors import Electrics
 
+logging.basicConfig(level=logging.DEBUG)
 parser = argparse.ArgumentParser(description='Listen to a BeamNG scenario given.')
 
 parser.add_argument('--interval', type=int,
@@ -40,34 +40,32 @@ if args.time is None:
 if args.port is None:
     args.port = 8080
 
-#Starting connection to the server beepbeep
+# Starting connection to the server beepbeep
 client = Client("localhost", args.port)
-beamng = BeamNGpy('localhost', 64256)  # This is the host & port used to communicate over
 client.open()
-beamng.open()
 
+# Call the scenario script given in args
+p = subprocess.run([sys.executable, args.scenario])
 
-#Call the scenario script given in args
-p = subprocess.Popen([sys.executable, args.scenario], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-stdout, stderr = p.communicate()
+# ** Works correctly
+beamng = BeamNGpy('localhost', 64256)  # This is the host & port used to communicate over
+beamng.connect()
+# Test, if it is really connected to the good instance
+beamng.display_gui_message("OZOEZE")
 
-#Loads the scenario
-scenario = pickle.loads(stdout)
+logging.debug(beamng.get_scenario_name())
+# ** until here
 
-vehicle_from_scenario = list()
-for vehicle in scenario.vehicles:
-    vehicle_from_scenario.append(vehicle)
+# WHY IS IT EMPTY ?
+logging.debug(beamng.get_current_scenario().vehicles)
+# It retrieve the vehicle, but doesn't have any captors that was attached through the setup, why ?
+vehicle = beamng.get_current_vehicles()['ego']
+vehicle.connect(bng=beamng)
 
-# Get the first vehicle, hardcoded but just used for test
-vehicle = vehicle_from_scenario[0]
+# Really terrible for reliability, imagine putting all captors in this script, not his job !
+electrics = Electrics()
+vehicle.attach_sensor('electrics', electrics)
 
-scenario.make(beamng)
-beamng.load_scenario(scenario)
-beamng.start_scenario()  # After loading, the simulator waits for further input to actually start
-
-vehicle.ai_set_mode('span')
-
-vehicle.update_vehicle()
 sensors = beamng.poll_sensors(vehicle)
 
 for _ in range(args.time):

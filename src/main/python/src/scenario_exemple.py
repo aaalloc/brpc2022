@@ -1,11 +1,11 @@
-import sys
-
 from beamngpy import BeamNGpy, Vehicle, Scenario
 from beamngpy.sensors import Electrics
-import pickle
 
 # Example of a scenario, you build your scenario and you send it into the buffer
 # Note for myself : make less ugly the dumps of the scenario
+beamng = BeamNGpy('localhost', 64256)  # This is the host & port used to communicate over
+beamng.open()
+
 
 # Create a vehile instance that will be called 'ego' in the simulation
 # using the etk800 model the simulator ships with
@@ -14,7 +14,7 @@ vehicle = Vehicle('ego', model='etk800', licence='PYTHON', colour='Green')
 electrics = Electrics()
 vehicle.attach_sensor('electrics', electrics)
 
-# Create a scenario called vehicle_state taking place in the west_coast_usa map the simulator ships with
+# Create a scenario called vehicle_state taking p   lace in the west_coast_usa map the simulator ships with
 scenario = Scenario('west_coast_usa', 'vehicle_state')
 # Add the vehicle and specify that it should start at a certain position and orientation.
 # The position & orientation values were obtained by opening the level in the simulator,
@@ -22,5 +22,7 @@ scenario = Scenario('west_coast_usa', 'vehicle_state')
 # corresponding values.
 scenario.add_vehicle(vehicle, pos=(-717.121, 101, 118.675), rot=(0, 0, 45))  # 45 degree rotation around the z-axis
 
-# Send scenario to listener
-sys.stdout.buffer.write(pickle.dumps(scenario))
+scenario.make(beamng)
+beamng.load_scenario(scenario)
+beamng.start_scenario()  # After loading, the simulator waits for further input to actually start
+vehicle.ai_set_mode('span')
