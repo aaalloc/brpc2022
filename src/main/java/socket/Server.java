@@ -60,7 +60,7 @@ public class Server {
             out = new PrintWriter(client.getOutputStream(),true);
 
             fromClient = in.readLine();
-            System.out.println("received from " + client.getLocalAddress() + " : " + fromClient);
+            //System.out.println("received from " + client.getLocalAddress() + " : " + fromClient);
 
             //if data correspond to flagKILL, then server should stop
             isEndOfTransmission = fromClient.equals(flagKill);
