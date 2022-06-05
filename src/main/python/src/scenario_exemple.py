@@ -1,3 +1,6 @@
+import pickle
+import sys
+
 from beamngpy import BeamNGpy, Vehicle, Scenario
 from beamngpy.sensors import Electrics
 
@@ -22,7 +25,11 @@ scenario = Scenario('west_coast_usa', 'vehicle_state')
 # corresponding values.
 scenario.add_vehicle(vehicle, pos=(-717.121, 101, 118.675), rot=(0, 0, 45))  # 45 degree rotation around the z-axis
 
+# Send scenario to listener
+# everything in line 30-32 has to be included in every scenario_*****.py
+sys.stdout.buffer.write(pickle.dumps(scenario))
 scenario.make(beamng)
 beamng.load_scenario(scenario)
-beamng.start_scenario()  # After loading, the simulator waits for further input to actually start
+# If you want to do anything precise with your vehicle,
+# it can be only done after the scenario is loaded (after the three lines upside is done)
 vehicle.ai_set_mode('span')
