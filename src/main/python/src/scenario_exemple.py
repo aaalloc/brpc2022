@@ -6,8 +6,8 @@ from beamngpy.sensors import Electrics
 
 # Example of a scenario, you build your scenario and you send it into the buffer
 # Note for myself : make less ugly the dumps of the scenario
-beamng = BeamNGpy('localhost', 64256)  # This is the host & port used to communicate over
-beamng.open()
+beamng_instance = BeamNGpy('localhost', 64256)  # This is the host & port used to communicate over
+beamng_instance.open()
 
 
 # Create a vehile instance that will be called 'ego' in the simulation
@@ -28,8 +28,8 @@ scenario.add_vehicle(vehicle, pos=(-717.121, 101, 118.675), rot=(0, 0, 45))  # 4
 # Send scenario to listener
 # everything in line 30-32 has to be included in every scenario_*****.py
 sys.stdout.buffer.write(pickle.dumps(scenario))
-scenario.make(beamng)
-beamng.load_scenario(scenario)
+scenario.make(beamng_instance)
+beamng_instance.load_scenario(scenario)
 # If you want to do anything precise with your vehicle,
 # it can be only done after the scenario is loaded (after the three lines upside is done)
 vehicle.ai_set_mode('span')

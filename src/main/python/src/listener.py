@@ -31,7 +31,7 @@ def send_data(car, sock):
     for _ in range(args.time):
         time.sleep(0.1)
         car.update_vehicle()  # Synchs the vehicle's "state" variable with the simulator
-        sensors = beamng.poll_sensors(car)  # Polls the data of all sensors attached to the vehicle
+        sensors = beamng_instance.poll_sensors(car)  # Polls the data of all sensors attached to the vehicle
         sock.send_packet(sensors)
         if output_path is not None:
             if os.getcwd() is not output_path:
@@ -93,19 +93,19 @@ if __name__ == "__main__":
     scenario = pickle.loads(stdout)
 
     # Get instance of current scenario
-    beamng = BeamNGpy('localhost', 64256)  # This is the host & port used to communicate over
-    beamng.connect()
+    beamng_instance = BeamNGpy('localhost', 64256)  # This is the host & port used to communicate over
+    beamng_instance.connect()
 
     # For each vehicle that has been found, initiate a connection to the server
     for vehicle in scenario.vehicles:
         socket = Client("localhost", args.port)
         socket.open()
 
-        vehicle.connect(bng=beamng)
+        vehicle.connect(bng=beamng_instance)
         vehicle_dict[vehicle.vid] = {"vehicle": vehicle, "socket": socket}
 
-    beamng.start_scenario()  # After loading, the simulator waits for further input to actually start
-    logging.debug(beamng.get_scenario_name())
+    beamng_instance.start_scenario()  # After loading, the simulator waits for further input to actually start
+    logging.debug(beamng_instance.get_scenario_name())
     logging.debug(scenario.vehicles)
 
     # Sending all vehicles data to server
@@ -113,5 +113,5 @@ if __name__ == "__main__":
         for _, value in vehicle_dict.items():
             executor.submit(send_data, value['vehicle'], value['socket'])
 
-    beamng.close()
+    beamng_instance.close()
     input('Hit enter when done...')
