@@ -1,3 +1,5 @@
+package beepbeep;
+
 import ca.uqac.lif.cep.Connector;
 import ca.uqac.lif.cep.Pullable;
 import ca.uqac.lif.cep.functions.ApplyFunction;
@@ -10,6 +12,7 @@ import ca.uqac.lif.json.JsonMap;
 import ca.uqac.lif.json.JsonPath;
 
 import java.io.IOException;
+import java.util.Random;
 
 public class BeepBeep
 {
@@ -21,7 +24,7 @@ public class BeepBeep
 
     public BeepBeep()
     {
-        System.out.println("Instantiating BeepBeep process");
+        System.out.println("Instantiating beepbeep.BeepBeep process");
         this.isProcessing = false;
         this.queueSource = new QueueSource();
         this.queueSource2 = new QueueSource();
@@ -43,11 +46,11 @@ public class BeepBeep
         Connector.connect(queueSource2, 0, maxFunction, 1);
         queueSource2.addEvent(maxSpeed);
 
-        System.out.println(queueSource.printState().toString());
-        System.out.println(queueSource2.printState().toString());
+        //System.out.println(queueSource.printState().toString());
+        //System.out.println(queueSource2.printState().toString());
         this.hasFilledSecondQueue = true;
 
-        //System.out.println("Max:" + maxSpeed);
+        System.out.println(this.getClass().toString() + " - Max:" + maxSpeed);
     }
 
     public float getSpeedFromJson(JsonMap jMap)

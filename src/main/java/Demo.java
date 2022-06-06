@@ -1,25 +1,13 @@
+import beepbeep.BeepBeep;
 import socket.Server;
+import socket.WorkerBeepBeep;
 
-import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.*;
 
 public class Demo { // need to change the name in the future, to abstract ...
-    public static void main(String[] args)
-    {
-        Server serv = new Server(8080,"end");
-        serv.waitConnection();
-
-        BeepBeep bb = new BeepBeep();
-
-        while(serv.dataFromClient().getClientState())
-        {
-            String data = serv.dataFromClient().getData();
-            // do beep bepp things
-            // .....
-
-            bb.addToQueue(data);
-            bb.process();
-        }
-        bb.setProcessing(false);
-        System.out.println("end of loop");
+    public static void main(String[] args) {
+        Server serv = new Server(8080);
+        serv.run();
     }
 }

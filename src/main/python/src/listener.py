@@ -114,4 +114,3 @@ if __name__ == "__main__":
             executor.submit(send_data, value['vehicle'], value['socket'])
 
     beamng_instance.close()
-    input('Hit enter when done...')
