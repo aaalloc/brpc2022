@@ -4,10 +4,10 @@ import beepbeep.processors.applyfunctions.parsers.StringToJsonMap;
 import beepbeep.processors.groupprocessors.getboolean.GetBooleanFromJsonMap;
 import beepbeep.processors.groupprocessors.getmax.GetMaxValueFromJsonMap;
 import beepbeep.processors.groupprocessors.getmin.GetMinValueFromJsonMap;
-import ca.uqac.lif.cep.AsynchronousProcessor;
 import ca.uqac.lif.cep.Connector;
 import ca.uqac.lif.cep.Processor;
 import ca.uqac.lif.cep.tmf.Fork;
+import ca.uqac.lif.cep.tmf.Pump;
 import ca.uqac.lif.cep.tmf.QueueSource;
 
 public class BeepBeep
@@ -32,6 +32,8 @@ public class BeepBeep
         System.out.println("Instantiating BeepBeep process");
 
         //final QueueSource elementsToGrab = new QueueSource().setEvents("electrics.rpm");
+
+        Pump pump = new Pump(100);
 
 
         //Trying with my own processors

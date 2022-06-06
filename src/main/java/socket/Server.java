@@ -1,4 +1,6 @@
 package socket;
+import beepbeep.BeepBeepAnalysis;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -47,8 +49,10 @@ public class Server{
 
     public void run() {
         Socket client;
-        while ((client = waitConnection()) != null){
-            this.threadPool.execute(new ClientWorker(client, this.server));
+        while ((client = waitConnection()) != null) {
+            this.threadPool.execute(
+                new BeepBeepAnalysis(100L, client, this.server)
+            );
         }
         this.threadPool.shutdownNow();
         System.out.println("END SERVER");
