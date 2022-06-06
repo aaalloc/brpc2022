@@ -10,12 +10,14 @@ import logging
 from concurrent.futures.thread import ThreadPoolExecutor
 import time
 
+from datetime import datetime
+
 from utils.server.Client import Client
 from beamngpy import BeamNGpy
 
 logging.basicConfig(level=logging.DEBUG)
-
 output_path = None
+now = datetime.now()
 
 
 # Create the output folder, and goes in it.
@@ -26,8 +28,13 @@ def create_folder(path):
         os.mkdir(output_path)
 
 
+def create_id_name(car_id):
+    dt_string = now.strftime("%d_%m_%Y-%H_%M_%S")
+    id = "{0}_{1}".format(car_id, dt_string)
+    return id
+
+
 def send_data(car, sock):
-    f = None
     for _ in range(args.time):
         time.sleep(0.1)
         car.update_vehicle()  # Synchs the vehicle's "state" variable with the simulator
@@ -37,10 +44,30 @@ def send_data(car, sock):
             if os.getcwd() is not output_path:
                 logging.debug("goes inside : " + output_path)
                 os.chdir(output_path)
-            with open("{}.json".format(car.vid), 'a', encoding='utf-8') as f:
+            with open("{}.json".format(create_id_name(car.vid)), 'a', encoding='utf-8') as f:
+                f.write("\"{}\" : ".format(_))
                 json.dump(sensors, f, ensure_ascii=False)
-                f.write("\n")
+                f.write("\n,")
     sock.close()
+
+
+def validate_output(id):
+    # Read all file
+    with open("{}.json".format(id), 'r') as f_original:
+        data = f_original.read()
+        f_original.close()
+    # Append "{" at the beginning
+    with open("{}.json".format(id), 'w') as f_modified:
+        f_modified.write("{" + data)
+        f_modified.close()
+    # Remove last caracter (",")
+    with open("{}.json".format(id), 'rb+') as f_modified:
+        f_modified.seek(-1, os.SEEK_END)
+        f_modified.truncate()
+        # Append "}"
+    with open("{}.json".format(id), 'a') as f_modified:
+        f_modified.write("}")
+    logging.debug("VALIDATE DONE")
 
 
 def parser_config():
@@ -112,5 +139,11 @@ if __name__ == "__main__":
     with ThreadPoolExecutor() as executor:
         for _, value in vehicle_dict.items():
             executor.submit(send_data, value['vehicle'], value['socket'])
+
+    for _, value in vehicle_dict.items():
+        car = value['vehicle']
+        if output_path is not None:
+            logging.debug("VALIDATE BELOW")
+            validate_output(create_id_name(car.vid))
 
     beamng_instance.close()
