@@ -12,13 +12,12 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
-import java.util.Random;
 
-public class WorkerBeepBeep implements Runnable{
+public class ClientWorker implements Runnable{
     private final ServerSocket serverSocket;
     private final Socket clientSocket;
 
-    public WorkerBeepBeep(Socket clientSocket, ServerSocket serverSocket){
+    public ClientWorker(Socket clientSocket, ServerSocket serverSocket){
         this.serverSocket = serverSocket;
         this.clientSocket = clientSocket;
     }
