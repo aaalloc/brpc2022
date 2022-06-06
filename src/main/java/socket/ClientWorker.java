@@ -39,27 +39,13 @@ public class ClientWorker implements Runnable{
         BeepBeep beepBeep = new BeepBeep();
         String data;
         while((data = getData())!= null){
-            /*beepBeep.addToQueue(data);
-            beepBeep.process();
-             */
-
-            Object obj;
-            try {
-                obj = new JSONParser().parse(data);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-
-            JSONObject jo = (JSONObject) obj;
-            Map electrics =((Map)jo.get("damage"));
-            System.out.println(electrics.get("damage_ext"));
-
+            beepBeep.addToQueue(data);
+            beepBeep.printMaxSpeed();
         }
         try {
             serverSocket.close();
         } catch (IOException e) {
             e.getStackTrace();
         }
-        beepBeep.setProcessing(false);
     }
 }

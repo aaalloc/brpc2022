@@ -38,10 +38,12 @@ public class Server{
             if(server.isClosed()) {
                 System.out.println("Server Stopped.");
                 return null;
-        } catch (Exception e){
-            e.getStackTrace();
+            }
+            throw new RuntimeException("Error accepting client connection", e);
         }
+        return client;
     }
+
 
     public void run() {
         Socket client;
