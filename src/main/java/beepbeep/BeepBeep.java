@@ -1,114 +1,97 @@
 package beepbeep;
 
+import beepbeep.processors.applyfunctions.parsers.StringToJsonMap;
+import beepbeep.processors.groupprocessors.getboolean.GetBooleanFromJsonMap;
+import beepbeep.processors.groupprocessors.getmax.GetMaxValueFromJsonMap;
+import beepbeep.processors.groupprocessors.getmin.GetMinValueFromJsonMap;
+import ca.uqac.lif.cep.AsynchronousProcessor;
 import ca.uqac.lif.cep.Connector;
-import ca.uqac.lif.cep.Pullable;
-import ca.uqac.lif.cep.functions.ApplyFunction;
-import ca.uqac.lif.cep.functions.Function;
-import ca.uqac.lif.cep.json.ParseJson;
+import ca.uqac.lif.cep.Processor;
+import ca.uqac.lif.cep.tmf.Fork;
 import ca.uqac.lif.cep.tmf.QueueSource;
-import ca.uqac.lif.cep.util.Numbers;
-import ca.uqac.lif.json.JsonElement;
-import ca.uqac.lif.json.JsonMap;
-import ca.uqac.lif.json.JsonPath;
-
-import java.io.IOException;
-import java.util.Random;
 
 public class BeepBeep
 {
-    private QueueSource queueSource;
-    private QueueSource queueSource2;
-    private boolean isProcessing;
-    private final ApplyFunction maxFunction;
-    private boolean hasFilledSecondQueue = false;
+
+    private final QueueSource jsonStrings = new QueueSource();
+
+    private final Processor minRPM;
+    private final Processor maxWheelSpeed;
+    private final Processor leftSignal;
+    private final Processor rightSignal;
+    private final Processor lowFuel;
+
+    /*private final Cumulate max;
+    //private final QueueSink sink;
+    //private final Pushable psPrint;
+
+    private final ApplyFunction stringToJsonMap;*/
 
     public BeepBeep()
     {
-        System.out.println("Instantiating beepbeep.BeepBeep process");
-        this.isProcessing = false;
-        this.queueSource = new QueueSource();
-        this.queueSource2 = new QueueSource();
+        System.out.println("Instantiating BeepBeep process");
 
-        maxFunction = new ApplyFunction(Numbers.maximum);
-        Connector.connect(queueSource, 0, maxFunction, 0);
-        Connector.connect(queueSource2, 0, maxFunction, 1);
+        //final QueueSource elementsToGrab = new QueueSource().setEvents("electrics.rpm");
+
+
+        //Trying with my own processors
+        //maxRPMprocessor = new GetMaxValueFromString("electrics.rpm");
+        //Connector.connect(jsonStrings, 0, maxRPMprocessor, 0);
+
+        Processor stringToJsonMap = new StringToJsonMap();
+        Connector.connect(jsonStrings, 0, stringToJsonMap, 0);
+
+
+        int nbOfProperties = 5;
+        Fork fork = new Fork(nbOfProperties); //1 output with the same JsonMap for each property
+        Connector.connect(stringToJsonMap, 0, fork, 0);
+
+        //QueueSink sink = new QueueSink(nbOfProperties);
+
+        minRPM = new GetMinValueFromJsonMap("electrics.rpm");
+        Connector.connect(fork, 0, minRPM, 0);
+
+        maxWheelSpeed = new GetMaxValueFromJsonMap("electrics.wheelspeed");
+        Connector.connect(fork, 1, maxWheelSpeed, 0);
+
+        leftSignal = new GetBooleanFromJsonMap("electrics.left_signal");
+        Connector.connect(fork, 2, leftSignal, 0);
+
+        rightSignal = new GetBooleanFromJsonMap("electrics.right_signal");
+        Connector.connect(fork, 3, rightSignal, 0);
+
+        lowFuel = new GetBooleanFromJsonMap("electrics.lowfuel");
+        Connector.connect(fork, 4, lowFuel, 0);
+
+
+        /*sink = new QueueSink();
+        Connector.connect(max, 0, sink, 0); //Stores the result in the sink*/
+
+        /*final Print print = new Print();
+        print.setPrintStream(System.out);
+        psPrint = print.getPushableInput();
+        Connector.connect(max, 0, print, 0); //Prints the output*/
     }
 
-    public void process()
+    public void printMaxSpeed()
     {
-        isProcessing = true;
-        Pullable p = maxFunction.getPullableOutput();
+        System.out.println("******************************");
+        System.out.println("Min RPM: " + minRPM.getPullableOutput().pull());
+        System.out.println("Max WheelSpeed: " + maxWheelSpeed.getPullableOutput().pull() + " m/s");
+        System.out.println("LeftSignal: " + leftSignal.getPullableOutput().pull());
+        System.out.println("RightSignal: " + rightSignal.getPullableOutput().pull());
+        System.out.println("LowFuel: " + lowFuel.getPullableOutput().pull());
 
-        //JsonMap jMap = (JsonMap) p.pull();
-        float maxSpeed  = (float) p.pull();
-
-        queueSource2 = new QueueSource();
-        Connector.connect(queueSource2, 0, maxFunction, 1);
-        queueSource2.addEvent(maxSpeed);
-
-        //System.out.println(queueSource.printState().toString());
-        //System.out.println(queueSource2.printState().toString());
-        this.hasFilledSecondQueue = true;
-
-        System.out.println(this.getClass().toString() + " - Max:" + maxSpeed);
+        //System.out.println("Max: " + sink.getPullableOutput().pull());
     }
 
-    public float getSpeedFromJson(JsonMap jMap)
-    {
-        String rpmString = JsonPath.get(jMap, "electrics.rpm").toString();
-        return Float.parseFloat(rpmString);
-    }
-
-    public void setEvents(String... queue)
-    {
-        JsonMap[] maps = new JsonMap[queue.length];
-        for (int i=0; i<maps.length; i++)
-        {
-            maps[i] = parseJson(queue[i]);
-        }
-        queueSource.setEvents((Object[]) maps);
-    }
 
     public void addToQueue(String s)
     {
-        JsonMap jMap = parseJson(s);
-        //System.out.println("Added to queue: " + jMap.toString());
-        float speed = getSpeedFromJson(jMap);
-
-        queueSource = new QueueSource();
-        Connector.connect(queueSource, 0, maxFunction, 0);
-
-
-        queueSource.addEvent(speed);
-        if (!this.hasFilledSecondQueue)
-        {
-            queueSource2.addEvent(speed);
-        }
-    }
-
-    public JsonMap parseJson(String jsonToParse)
-    {
-        ParseJson parse = ParseJson.instance;
-        Object[] out = new Object[1];
-        parse.evaluate(new Object[]{jsonToParse}, out);
-        JsonElement j = (JsonElement) out[0];
-        return (JsonMap) j;
-    }
-
-
-    public QueueSource getQueueSource()
-    {
-        return queueSource;
-    }
-
-    public boolean isProcessing()
-    {
-        return isProcessing;
-    }
-
-    public void setProcessing(boolean processing)
-    {
-        isProcessing = processing;
+        //System.out.println("Added to queue: " + s);
+        jsonStrings.addEvent(s);
+        //jsonStrings.getPushableInput().push(s); pas sûr
+        //stringToJsonMap.getPushableInput().push(s);
     }
 
 }
