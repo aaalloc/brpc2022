@@ -1,6 +1,5 @@
+import beepbeep.BeepBeep;
 import socket.Server;
-
-import java.io.IOException;
 
 public class Demo { // need to change the name in the future, to abstract ...
     public static void main(String[] args)
@@ -13,13 +12,9 @@ public class Demo { // need to change the name in the future, to abstract ...
         while(serv.dataFromClient().getClientState())
         {
             String data = serv.dataFromClient().getData();
-            // do beep bepp things
-            // .....
-
             bb.addToQueue(data);
-            bb.process();
+            bb.printMaxSpeed();
         }
-        bb.setProcessing(false);
         System.out.println("end of loop");
     }
 }
