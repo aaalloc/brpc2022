@@ -1,4 +1,5 @@
 import json
+import logging
 import socket
 import sys
 
@@ -30,13 +31,7 @@ class Client:
 
     def send_packet(self, data):
         self.socket.sendall(json.dumps(data).encode('utf-8') + "\n".encode())
-        receive_from_server = self.socket.recv(1024)
-        print(receive_from_server)
+        logging.debug("packet sended")
 
     def stop_connection(self):
-        self.socket.sendall("end\n".encode())
-        receive_from_server = self.socket.recv(1024)
-        if receive_from_server == b'closed\r\n':
-            print("Server is closed")
-            self.socket.close()
-            # sys.exit(0)
+        self.socket.close()
