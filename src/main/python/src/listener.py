@@ -85,22 +85,22 @@ if __name__ == "__main__":
     # A dict that contains the vehicle, sensors and socket from a vehicle associated to his vid (id basically)
     vehicle_dict = dict()
 
-    scenario_preset = importlib.import_module('utils.scenario.{}'.format(args.scenario))
-    scenario_preset.Preset.run()
+    import_scenario = importlib.import_module('utils.scenario.{}'.format(args.scenario))
+    import_scenario.ConfigScenario.run()
 
     # Get instance of current scenario
-    beamng_instance = scenario_preset.Preset.get_beamng_instance()
-    scenario = scenario_preset.Preset.get_scenario()
+    beamng_instance = import_scenario.ConfigScenario.get_beamng_instance()
+    scenario = import_scenario.ConfigScenario.get_scenario()
     logging.debug(scenario.name)
 
     # For each vehicle that has been found, initiate a connection to the server
     for vehicle in scenario.vehicles:
         socket = Client("localhost", args.port)
         socket.open()
-        vehicle.connect(beamng_instance)
         vehicle_dict[vehicle.vid] = {"vehicle": vehicle, "socket": socket}
 
     beamng_instance.start_scenario()
+
     # Sending all vehicles data to server
     with ThreadPoolExecutor() as executor:
         for _, value in vehicle_dict.items():

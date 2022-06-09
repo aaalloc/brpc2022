@@ -4,7 +4,7 @@ from beamngpy.sensors import Electrics, Damage
 scenario = None
 
 
-class Preset:
+class ConfigScenario:
     scenario = None
     beamng_instance = None
 
@@ -19,6 +19,10 @@ class Preset:
     def get_beamng_instance(cls):
         return cls.beamng_instance
 
+    # Example of what a "scenario" should look like.
+
+    # Take not of the cls.beamng_instance and cls.scenario,
+    # you absolutely need to invoke that cls key word, or the global var wont change !
     @classmethod
     def run(cls):
         cls.beamng_instance = BeamNGpy('localhost', 64256)  # This is the host & port used to communicate over
@@ -47,5 +51,5 @@ class Preset:
         cls.scenario.make(cls.beamng_instance)
         cls.beamng_instance.load_scenario(cls.scenario)
 
-        # enable an auto driving by an AI
+        # enable auto driving by an AI on vehicle_1
         vehicle_1.ai_set_mode('span')
