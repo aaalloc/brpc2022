@@ -1,6 +1,7 @@
 package beepbeep.processors;
 
 import ca.uqac.lif.cep.Processor;
+import ca.uqac.lif.cep.tmf.Pump;
 import ca.uqac.lif.cep.tmf.Source;
 
 import java.io.BufferedReader;

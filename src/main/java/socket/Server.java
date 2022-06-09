@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 
 public class Server{
 
+    private final long interval;
     private ServerSocket server = null;
     private final ExecutorService threadPool = Executors.newFixedThreadPool(10);
 
@@ -16,8 +17,9 @@ public class Server{
      * Create a Server socket with a port
      * @param port : Port of the server.
      */
-    public Server(int port)
+    public Server(int port, long interval)
     {
+        this.interval = interval;
         try{
             server =  new ServerSocket(port);
         } catch (Exception e){
@@ -51,7 +53,7 @@ public class Server{
         Socket client;
         while ((client = waitConnection()) != null) {
             this.threadPool.execute(
-                new BeepBeepAnalysis(100L, client, this.server)
+                new BeepBeepAnalysis(this.interval, client, this.server)
             );
         }
         this.threadPool.shutdownNow();

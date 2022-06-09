@@ -17,9 +17,9 @@ import java.net.Socket;
 public class BeepBeepAnalysis implements Runnable
 {
 
-    private final long interval;
     private final Socket clientSocket;
     private final ServerSocket serverSocket;
+    private final long interval;
 
     public BeepBeepAnalysis(long interval, Socket clientSocket, ServerSocket serverSocket)
     {
@@ -36,34 +36,26 @@ public class BeepBeepAnalysis implements Runnable
     }
 
 
-    private void process()
-    {
-        //final QueueSource elementsToGrab = new QueueSource().setEvents("electrics.rpm");
+    private void process() {
 
-        //Trying with my own processors
-        //maxRPMprocessor = new GetMaxValueFromString("electrics.rpm");
-        //Connector.connect(jsonStrings, 0, maxRPMprocessor, 0);
-
-        Processor socketProcessor = new SocketReader(this.clientSocket, this.serverSocket);
+        final Processor socketProcessor = new SocketReader(this.clientSocket, this.serverSocket);
 
         final Processor stringToJsonMap = new StringToJsonMap();
-        //final SocketPump pump = new SocketPump(this.interval, this.clientSocket, this.serverSocket);
-        final Pump pump = new Pump(100);
 
+        final Pump pump = new Pump(this.interval);
         Connector.connect(socketProcessor, 0, pump, 0);
         Connector.connect(pump, 0, stringToJsonMap, 0);
 
 
-
         int nbOfProperties = 5;
 
-        Fork fork = new Fork(nbOfProperties);
+        final Fork fork = new Fork(nbOfProperties);
         Connector.connect(stringToJsonMap, 0, fork, 0);
 
         //QueueSink sink = new QueueSink(nbOfProperties);
 
         final Print[] printers = new Print[nbOfProperties];
-        for (int i=0; i<printers.length; i++) {
+        for (int i = 0; i < printers.length; i++) {
             printers[i] = new Print();
             printers[i].setSeparator("\n");
         }
@@ -74,12 +66,12 @@ public class BeepBeepAnalysis implements Runnable
         printers[4].setPrefix("LowFuel: ");
 
 
-        Processor minRPM = new GetMinValueFromJsonMap("electrics.rpm");
+        final Processor minRPM = new GetMinValueFromJsonMap("electrics.rpm");
         Connector.connect(fork, 0, minRPM, 0);
         Connector.connect(minRPM, 0, printers[0], 0);
 
 
-        Processor maxWheelSpeed = new GetMaxValueFromJsonMap("electrics.wheelspeed");
+        final Processor maxWheelSpeed = new GetMaxValueFromJsonMap("electrics.wheelspeed");
         Connector.connect(fork, 1, maxWheelSpeed, 0);
         Connector.connect(maxWheelSpeed, 0, printers[1], 0);
 
@@ -89,12 +81,12 @@ public class BeepBeepAnalysis implements Runnable
         Connector.connect(leftSignal, 0, printers[2], 0);
 
 
-        Processor rightSignal = new GetBooleanFromJsonMap("electrics.right_signal");
+        final Processor rightSignal = new GetBooleanFromJsonMap("electrics.right_signal");
         Connector.connect(fork, 3, rightSignal, 0);
         Connector.connect(rightSignal, 0, printers[3], 0);
 
 
-        Processor lowFuel = new GetBooleanFromJsonMap("electrics.lowfuel");
+        final Processor lowFuel = new GetBooleanFromJsonMap("electrics.lowfuel");
         Connector.connect(fork, 4, lowFuel, 0);
         Connector.connect(lowFuel, 0, printers[4], 0);
 
@@ -102,7 +94,9 @@ public class BeepBeepAnalysis implements Runnable
         /*sink = new QueueSink();
         Connector.connect(max, 0, sink, 0); //Stores the result in the sink*/
 
-        final Thread thread = new Thread(pump);
-        thread.start();
+        try {
+            pump.run();
+        } catch (Exception ignored) {
+        }
     }
 }
