@@ -10,8 +10,6 @@ import time
 from utils.server.Client import Client
 from beamngpy import BeamNGpy
 
-logging.basicConfig(level=logging.DEBUG)
-
 output_path = None
 
 
@@ -26,7 +24,7 @@ def create_folder(path):
 def send_data(car, sock):
     f = None
     for _ in range(args.time):
-        time.sleep(0.1)
+        time.sleep(args.delay / 1000.0) # Convert our delay (ms) to seconds
         car.update_vehicle()  # Synchs the vehicle's "state" variable with the simulator
         sensors = beamng_instance.poll_sensors(car)  # Polls the data of all sensors attached to the vehicle
         sock.send_packet(sensors)
@@ -43,11 +41,13 @@ def send_data(car, sock):
 def parser_config():
     parser = argparse.ArgumentParser(description='Listen to a BeamNG scenario given.')
 
-    parser.add_argument('--interval', type=int,
-                        help='Number of snapshots wanted per seconds (default is 10)')
+    parser.add_argument('--debug', action='store_true', help='Activate debug output')
 
     parser.add_argument('--time', type=int,
-                        help='Time of the s')
+                        help='Number of snapshots wanted per seconds (default is 60)')
+
+    parser.add_argument('--delay', type=int,
+                        help='Delay of transmitting the snapshots in milliseconds (default is 100)')
 
     # Optional, by default is 8080.
     parser.add_argument('--port', type=int,
@@ -61,11 +61,14 @@ def parser_config():
 
     args = parser.parse_args()
 
-    if args.interval is None:
-        args.port = 10
+    if args.delay is None:
+        args.delay = 100
+
+    if args.debug is True:
+        logging.basicConfig(level=logging.DEBUG)
 
     if args.time is None:
-        args.time = 240
+        args.time = 60
 
     if args.port is None:
         args.port = 8080

@@ -43,7 +43,9 @@ class Preset:
         cls.scenario.add_vehicle(vehicle_1, pos=(-717.121, 101, 118.675),
                                  rot=(0, 0, 45))  # 45 degree rotation around the z-axis
 
+        # Really important !
         cls.scenario.make(cls.beamng_instance)
         cls.beamng_instance.load_scenario(cls.scenario)
 
+        # enable an auto driving by an AI
         vehicle_1.ai_set_mode('span')
