@@ -1,5 +1,6 @@
 package beepbeep;
 
+import beepbeep.processors.SocketReader;
 import beepbeep.processors.applyfunctions.parsers.StringToJsonMap;
 import beepbeep.processors.groupprocessors.getboolean.GetBooleanFromJsonMap;
 import beepbeep.processors.groupprocessors.getmax.GetMaxValueFromJsonMap;
@@ -8,7 +9,7 @@ import ca.uqac.lif.cep.Connector;
 import ca.uqac.lif.cep.Processor;
 import ca.uqac.lif.cep.io.Print;
 import ca.uqac.lif.cep.tmf.Fork;
-import beepbeep.processors.SocketPump;
+import ca.uqac.lif.cep.tmf.Pump;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -43,9 +44,15 @@ public class BeepBeepAnalysis implements Runnable
         //maxRPMprocessor = new GetMaxValueFromString("electrics.rpm");
         //Connector.connect(jsonStrings, 0, maxRPMprocessor, 0);
 
+        Processor socketProcessor = new SocketReader(this.clientSocket, this.serverSocket);
+
         final Processor stringToJsonMap = new StringToJsonMap();
-        final SocketPump pump = new SocketPump(this.interval, this.clientSocket, this.serverSocket);
+        //final SocketPump pump = new SocketPump(this.interval, this.clientSocket, this.serverSocket);
+        final Pump pump = new Pump(100);
+
+        Connector.connect(socketProcessor, 0, pump, 0);
         Connector.connect(pump, 0, stringToJsonMap, 0);
+
 
 
         int nbOfProperties = 5;
