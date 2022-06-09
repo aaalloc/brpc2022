@@ -2,10 +2,7 @@ import argparse
 import json
 import os
 import pathlib
-import pickle
-import subprocess
-import sys
-
+import importlib
 import logging
 from concurrent.futures.thread import ThreadPoolExecutor
 import time
@@ -85,29 +82,22 @@ if __name__ == "__main__":
     # A dict that contains the vehicle, sensors and socket from a vehicle associated to his vid (id basically)
     vehicle_dict = dict()
 
-    # Call the scenario script given in args
-    p = subprocess.Popen([sys.executable, args.scenario], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = p.communicate()
-    print(stderr.decode())
-    # Loads the scenario
-    scenario = pickle.loads(stdout)
+    scenario_preset = importlib.import_module('utils.scenario.{}'.format(args.scenario))
+    scenario_preset.Preset.run()
 
     # Get instance of current scenario
-    beamng_instance = BeamNGpy('localhost', 64256)  # This is the host & port used to communicate over
-    beamng_instance.connect()
+    beamng_instance = scenario_preset.Preset.get_beamng_instance()
+    scenario = scenario_preset.Preset.get_scenario()
+    logging.debug(scenario.name)
 
     # For each vehicle that has been found, initiate a connection to the server
     for vehicle in scenario.vehicles:
         socket = Client("localhost", args.port)
         socket.open()
-
-        vehicle.connect(bng=beamng_instance)
+        vehicle.connect(beamng_instance)
         vehicle_dict[vehicle.vid] = {"vehicle": vehicle, "socket": socket}
 
-    beamng_instance.start_scenario()  # After loading, the simulator waits for further input to actually start
-    logging.debug(beamng_instance.get_scenario_name())
-    logging.debug(scenario.vehicles)
-
+    beamng_instance.start_scenario()
     # Sending all vehicles data to server
     with ThreadPoolExecutor() as executor:
         for _, value in vehicle_dict.items():

@@ -21,5 +21,5 @@ test {
 }
 
 application {
-    mainClass = 'Demo' // to change in the future
+    mainClass = 'Main' // to change in the future
 }
