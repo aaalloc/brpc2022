@@ -1,8 +1,6 @@
 from beamngpy import BeamNGpy, Vehicle, Scenario
 from beamngpy.sensors import Electrics, Damage
 
-scenario = None
-
 
 class ConfigScenario:
     scenario = None
