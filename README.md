@@ -106,7 +106,7 @@ If no data is available, this means that the simulation has ended and that the s
 Now, you have a processor which **COULD** read the sockets, get the JSON-string and transfer it to the next processor in the chain, **if another processor asks it to**.
 The problem is that no one does.
 
-### Getting a HashMap to read the wanted properties from
+### Getting a JsonMap to read the wanted properties from
 What you'll have to do now, is to set up a [Pump](https://liflab.gitbook.io/event-stream-processing-with-beepbeep-3/advanced#pumps-and-tanks) processor, which will request the current JSON-string to the SocketReader you just set up, with a constant delay which should preferably be the same as the one with which you're sending the sockets. When the pump gets the requested string, it will push it until the end of the processors' chain.
 
 The pump being in place, you will be able to retrieve a string. But, what you want is to get a specific property.
@@ -114,20 +114,20 @@ To do that, you will want to parse the String as a JsonMap (we used the JSON lib
 
 An ApplyFunction needs to be given a function (which will return an output based on an input). Since the function only needs one input, it will extend the UnaryFunction class.
 In our case, the function takes a String as input and returns a JsonElement (which is a superclass of JsonMap, and which could also represent a property).
-We now have our homemade HashMap object as a JsonElement object.
+We now have our JsonMap object.
 
-### Getting a property from our JsonElement map
+### Getting a property from our JsonMap
 Imagine you want to get many properties, and process them differently.
 For example, let's say you want to get the "wheelspeed" property, which is a number, and the "lowfuel" property, which is a boolean (both of them are in the "electrics" sensors).
 
 Since the JSON-string of a vehicle stores all the vehicle's properties, you don't want to parse the string as a map many times. So you will just use the map as an input to 2 different chains of processors.
 To do that, you'll have to use a Fork processor, with an output arity of 2 (this will depend on the number of properties you want to analyze).
-Now, you have two outputs with the same JsonElement (representing the JSON map) that you can treat differently.
+Now, you have two outputs with the same JsonMap that you can treat differently.
 
 #### Group Processors
 First, have a look at [the doc](https://liflab.gitbook.io/event-stream-processing-with-beepbeep-3/core#grouping-processors).
-We coded two main groups of processors, the first one being GetBooleanFromJsonMap and the second one being GetNumberFromJsonMap.
-These will allow you to get a property, depending on its type (whether it's a boolean or a number), directly from the JsonElement representing the map.
+We coded three main groups of processors, the first one being GetBooleanFromJsonMap, the second one being GetNumberFromJsonMap and the last one being GetStringFromJsonMap (this one isn't used at the moment since the sensors only return numbers/booleans).
+These will allow you to get a property, depending on its type (whether it's a boolean/number/string), directly from the JsonElement representing the map.
 How they work is: you give them the path of the property (in the json map), it parses the element (the same way we did to parse the string to a map, except we changed the parameter function given to our ApplyFunction) to what you want and returns its value.
 
 You can now connect each of your fork's outputs to the input of one of this group of processors, and get the value of the property as its output.
@@ -140,7 +140,7 @@ Connector.connect(fork, 0, getRpm, 0);
 Connector.connect(fork, 1, getLowFuel, 0);
 ```
 
-We coded many other groups of processors, for example GetMinFromJsonMap() and GetMaxFromJsonMap() which return a number.
+We coded many other groups of processors, for example GetMinimum() and GetMaximum() which both return a number.
 
 Now, feel free to create your own chains of processors to store or process your properties.
 
