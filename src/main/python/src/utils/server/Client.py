@@ -31,7 +31,7 @@ class Client:
 
     def send_packet(self, data):
         self.socket.sendall(json.dumps(data).encode('utf-8') + "\n".encode())
-        logging.debug("packet sended")
+        logging.debug("packet sent")
 
     def stop_connection(self):
         self.socket.close()
