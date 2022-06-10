@@ -14,7 +14,7 @@ public class JsonPropertyToNumber extends UnaryFunction<JsonElement, Number>
     }
 
     @Override
-    public synchronized Number getValue(JsonElement property)
+    public Number getValue(JsonElement property)
     {
         JsonNumber jsonNumber = (JsonNumber) property;
         return jsonNumber.numberValue();

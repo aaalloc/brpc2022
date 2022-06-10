@@ -1,4 +1,4 @@
-package beepbeep.processors.groupprocessors.getboolean;
+package beepbeep.processors.groupprocessors.basics.getboolean;
 
 import beepbeep.processors.applyfunctions.parsers.JsonMapToJsonProperty;
 import beepbeep.processors.applyfunctions.parsers.properties.JsonPropertyToBoolean;
@@ -9,13 +9,13 @@ import ca.uqac.lif.cep.Processor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GetBooleanFromString extends GroupProcessor {
+public class GetBooleanFromJsonMap extends GroupProcessor {
 
     private JsonMapToJsonProperty jsonMapToJsonProperty;
     private JsonPropertyToBoolean jsonPropertyToBoolean;
     private final String jsonPath;
 
-    public GetBooleanFromString(String jsonPropertyPath) {
+    public GetBooleanFromJsonMap(String jsonPropertyPath) {
         super(1, 1);
 
         this.jsonPath = jsonPropertyPath;
