@@ -29,6 +29,7 @@ public class SocketReader extends Source {
         if (data == null) {
             try {
                 this.serverSocket.close();
+                return false;
             } catch (IOException e) {
                 e.printStackTrace();
             }

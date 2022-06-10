@@ -94,9 +94,6 @@ public class BeepBeepAnalysis implements Runnable
         /*sink = new QueueSink();
         Connector.connect(max, 0, sink, 0); //Stores the result in the sink*/
 
-        try {
-            pump.run();
-        } catch (Exception ignored) {
-        }
+        pump.run();
     }
 }
