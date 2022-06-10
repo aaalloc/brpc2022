@@ -1,6 +1,6 @@
 package beepbeep.processors.groupprocessors.processing.getmax;
 
-import beepbeep.processors.applyfunctions.GetMaxValue;
+import beepbeep.processors.applyfunctions.processing.GetMaxValue;
 import beepbeep.processors.applyfunctions.parsers.JsonMapToJsonProperty;
 import beepbeep.processors.applyfunctions.parsers.properties.JsonPropertyToNumber;
 import beepbeep.processors.applyfunctions.parsers.StringToJsonMap;

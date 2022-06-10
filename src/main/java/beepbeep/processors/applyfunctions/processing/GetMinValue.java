@@ -1,4 +1,4 @@
-package beepbeep.processors.applyfunctions;
+package beepbeep.processors.applyfunctions.processing;
 
 import ca.uqac.lif.cep.functions.Cumulate;
 import ca.uqac.lif.cep.functions.CumulativeFunction;

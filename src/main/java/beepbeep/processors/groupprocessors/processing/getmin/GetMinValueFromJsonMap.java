@@ -1,6 +1,6 @@
 package beepbeep.processors.groupprocessors.processing.getmin;
 
-import beepbeep.processors.applyfunctions.GetMinValue;
+import beepbeep.processors.applyfunctions.processing.GetMinValue;
 import beepbeep.processors.applyfunctions.parsers.JsonMapToJsonProperty;
 import beepbeep.processors.applyfunctions.parsers.properties.JsonPropertyToNumber;
 import ca.uqac.lif.cep.Connector;
