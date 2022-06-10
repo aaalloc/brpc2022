@@ -5,8 +5,7 @@ import ca.uqac.lif.json.JsonElement;
 import ca.uqac.lif.json.JsonMap;
 import ca.uqac.lif.json.JsonPath;
 
-public class JsonMapToJsonProperty extends UnaryFunction<JsonMap, JsonElement>
-{
+public class JsonMapToJsonProperty extends UnaryFunction<JsonMap, JsonElement> {
 
     private final String jsonPath;
 

@@ -14,15 +14,13 @@ import ca.uqac.lif.cep.tmf.Pump;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class BeepBeepAnalysis implements Runnable
-{
+public class BeepBeepAnalysis implements Runnable {
 
     private final Socket clientSocket;
     private final ServerSocket serverSocket;
     private final long interval;
 
-    public BeepBeepAnalysis(long interval, Socket clientSocket, ServerSocket serverSocket)
-    {
+    public BeepBeepAnalysis(long interval, Socket clientSocket, ServerSocket serverSocket) {
         System.out.println("Instantiating BeepBeep process");
 
         this.interval = interval;
