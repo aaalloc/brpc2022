@@ -1,7 +1,8 @@
 package beepbeep.functions.parsers.properties;
 
 import ca.uqac.lif.cep.functions.UnaryFunction;
-import ca.uqac.lif.json.*;
+import ca.uqac.lif.json.JsonElement;
+import ca.uqac.lif.json.JsonNumber;
 
 public class JsonPropertyToNumber extends UnaryFunction<JsonElement, Number>
 {

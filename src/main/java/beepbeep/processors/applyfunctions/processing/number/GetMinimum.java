@@ -1,12 +1,12 @@
-package beepbeep.processors.applyfunctions.processing;
+package beepbeep.processors.applyfunctions.processing.number;
 
 import ca.uqac.lif.cep.functions.Cumulate;
 import ca.uqac.lif.cep.functions.CumulativeFunction;
 import ca.uqac.lif.cep.util.Numbers;
 
-public class GetMinValue extends Cumulate {
+public class GetMinimum extends Cumulate {
 
-    public GetMinValue() {
+    public GetMinimum() {
         super(new CumulativeFunction<>(Numbers.minimum));
     }
 

@@ -1,12 +1,12 @@
-package beepbeep.processors.applyfunctions.processing;
+package beepbeep.processors.applyfunctions.processing.number;
 
 import ca.uqac.lif.cep.functions.Cumulate;
 import ca.uqac.lif.cep.functions.CumulativeFunction;
 import ca.uqac.lif.cep.util.Numbers;
 
-public class GetMaxValue extends Cumulate {
+public class GetMaximum extends Cumulate {
 
-    public GetMaxValue() {
+    public GetMaximum() {
         super(new CumulativeFunction<>(Numbers.maximum));
     }
 

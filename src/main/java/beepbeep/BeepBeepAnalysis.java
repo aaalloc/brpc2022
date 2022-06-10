@@ -2,9 +2,9 @@ package beepbeep;
 
 import beepbeep.processors.SocketReader;
 import beepbeep.processors.applyfunctions.parsers.StringToJsonMap;
-import beepbeep.processors.groupprocessors.basics.getboolean.GetBooleanFromJsonMap;
-import beepbeep.processors.groupprocessors.processing.getmax.GetMaxValueFromJsonMap;
-import beepbeep.processors.groupprocessors.processing.getmin.GetMinValueFromJsonMap;
+import beepbeep.processors.groupprocessors.basics.GetBooleanFromJsonMap;
+import beepbeep.processors.groupprocessors.processing.number.GetMaxValueFromJsonMap;
+import beepbeep.processors.groupprocessors.processing.number.GetMinValueFromJsonMap;
 import ca.uqac.lif.cep.Connector;
 import ca.uqac.lif.cep.Processor;
 import ca.uqac.lif.cep.io.Print;
