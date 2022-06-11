@@ -54,7 +54,7 @@ This project consist in a use case of BeepBeep with BeamNG.
 # Getting Started
 
 ## Note
-We highly suggest you to use [IntelliJ](https://www.jetbrains.com/idea/) with [Python plugin](https://plugins.jetbrains.com/plugin/631-python) if you want to work with what have been done.
+We highly suggest you to use [IntelliJ](https://www.jetbrains.com/idea/) with [Python plugin](https://plugins.jetbrains.com/plugin/631-python) if you want to work in the efficient way with what have been done.
 
 ## Prerequisites
 * Windows 10 (BeamNG seems to not work on Linux)
@@ -66,13 +66,11 @@ We highly suggest you to use [IntelliJ](https://www.jetbrains.com/idea/) with [P
 * BeamNG.tech license (_you can ask yours [here](https://register.beamng.tech/)_)
 
 ## BeamNGPy
-##### Work in progress
-To use BeamNGPy library, you need to setup your tech.key received with your BeamNG.tech license, we suggest you to check their [github](https://github.com/BeamNG/BeamNGpy#prereqs).
+To use BeamNGPy library, you need to configure workspace (tell where is BeamNG located),
+__WIP__
 
-In order to analyze the vehicles' data, you'll have to know what you're looking for first.  
-Each vehicle has its own set of sensors, producing values that we will call "properties" from now on. These properties may change during the simulation.
 
-You can find a list of existing properties related to a vehicle's state [here](https://github.com/BeamNG/BeamNGpy/blob/0f25ee8d047e787240fa624ddfa3f9d54addf0ca/src/beamngpy/vehicle.py#L116-L133), and most importantly the "electrics" properties [here](https://github.com/BeamNG/BeamNGpy/blob/3009c6f80045f05ca78a376d7c4d0bcf416e9316/src/beamngpy/sensors.py#L978-L1050).
+
 
 ## IDE Configuration
 ### IntelliJ
@@ -151,17 +149,38 @@ First of all, you need to start the Server, for that you have two options :
   That command will simply run the server on the port 8080 with 100 milliseconds of delay to retrieve data that has been sent.
 
 - __Via IDE (IntelliJ)__
-  To do
+  Open ``Run/Debug Configuration`` (just beside the green play button, add new configuration by choosing Gradle, choose the brpc2022 folder and write simply in task category `run --args="8080 100"`. For more inside, have a look at [IntelliJ documentation](https://www.jetbrains.com/help/idea/run-debug-gradle.html).
+  __GIF TO SHOW PROCESS__
 
 The server is now running waiting connections.
 
 ### Client side
 To start your scenario, you will have to use the script ``listener.py`` present in ``main/python/src``. You can use the the option ``--help`` to know what parameters you can give :
 ```
-output of py listener.py --help
-```
+$> py listener.py --help
 
-So, ``py listener.py --debug --time 60 --delay 100 -- port 8080 --output samples scenario_example`` will start the scenario_example present in the ``src/utils/scenario`` package, connected to the localserver to the port 8080, with debug log enabled, with 60 snapshot in total with 100 milliseconds of interval and finally all snapshots saved into one json into ``src/samples`` with the following format name : ``carId_Day_Month_Year-Hours_Minutes_Seconds.json``
+$> usage: listener.py [-h] [--debug] [--time TIME] [--delay DELAY] [--port PORT]  
+[--output OUTPUT] scenario  
+  
+Listen to a BeamNG scenario given.  
+  
+positional arguments:  
+	scenario BeamNG scenario that you want to listen  
+  
+optional arguments:  
+	-h, --help show this help message and exit,  
+	--debug Activate debug output,
+	--time TIME Number of snapshots wanted per seconds (default is 60),  
+	--delay DELAY Delay of transmitting the snapshots in milliseconds (default is 100),  
+	--port PORT (default is 8080),  
+	--output OUTPUT Create a folder containing all jsons data for all vehicles.  
+	(optional)
+```
+So,
+```
+py listener.py --debug --time 60 --delay 100 -- port 8080 --output samples scenario_example
+```
+will start the scenario_example present in the ``src/utils/scenario`` package, connected to the localserver to the port 8080, with debug log enabled, with 60 snapshot in total with 100 milliseconds of interval and finally all snapshots saved into one json into ``src/samples`` with the following format name : ``carId_Day_Month_Year-Hours_Minutes_Seconds.json``
 
 Example of what json should look like in this case :
 ```json
@@ -171,6 +190,11 @@ Example of what json should look like in this case :
 	"59" : {........}
 }
 ```
+
+In order to analyze the vehicles' data, you'll have to know what you're looking for first.  
+Each vehicle has its own set of sensors, producing values that we will call "properties" from now on. These properties may change during the simulation.
+
+You can find a list of existing properties related to a vehicle's state [here](https://github.com/BeamNG/BeamNGpy/blob/0f25ee8d047e787240fa624ddfa3f9d54addf0ca/src/beamngpy/vehicle.py#L116-L133), and most importantly the "electrics" properties [here](https://github.com/BeamNG/BeamNGpy/blob/3009c6f80045f05ca78a376d7c4d0bcf416e9316/src/beamngpy/sensors.py#L978-L1050).
 
 # Explanation
 
@@ -214,8 +238,7 @@ To do that, you'll have to use a Fork processor, with an output arity of 2 (this
 Now, you have two outputs with the same JsonMap that you can treat differently.
 
 #### Group Processors
-First, have a look at [the doc](https://liflab.gitbook.io/event-stream-processing-with-beepbeep-3/core#grouping-processors).  
-We coded three main groups of processors, the first one being GetBooleanFromJsonMap, the second one being GetNumberFromJsonMap and the last one being GetStringFromJsonMap (this one isn't used at the moment since the sensors only return numbers/booleans).  
+First, have a look at [BeepBeep grouping processors documentation](https://liflab.gitbook.io/event-stream-processing-with-beepbeep-3/core#grouping-processors).  We coded three main groups of processors, the first one being GetBooleanFromJsonMap, the second one being GetNumberFromJsonMap and the last one being GetStringFromJsonMap (this one isn't used at the moment since the sensors only return numbers/booleans).  
 These will allow you to get a property, depending on its type (whether it's a boolean/number/string), directly from the JsonElement representing the map.  
 How they work is: you give them the path of the property (in the json map), it parses the element (the same way we did to parse the string to a map, except we changed the parameter function given to our ApplyFunction) to what you want and returns its value.
 
@@ -236,4 +259,4 @@ Now, feel free to create your own chains of processors to store or process your 
 # Contact us
 
 _Alexander Yanovskyy_ : contact@yanovskyy.com    
-_Baptiste Wetterwald_ : [github profile](https://github.com/BaptisteWetterwald)
+_Baptiste Wetterwald_ : [Github](https://github.com/BaptisteWetterwald)
