@@ -67,7 +67,15 @@ We highly suggest you to use [IntelliJ](https://www.jetbrains.com/idea/) with [P
 
 ## BeamNGPy
 To use BeamNGPy library, you need to configure workspace (tell where is BeamNG located),
-__WIP__
+- __Via Global environment variables__
+  All you have to do is going to your global environement on your machine and a new one called "BNG_HOME" that point to where you installed BeamNG.
+- __Via Python__
+  Open a terminal and type :
+  ```
+  beamngpy --work-space <PATH-TO-BEAMNG>
+  ``` 
+  and Voilà !
+
 
 
 
