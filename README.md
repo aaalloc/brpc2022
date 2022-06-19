@@ -253,7 +253,10 @@ Connector.connect(fork, 0, getRpm, 0);
 Connector.connect(fork, 1, getLowFuel, 0);  
 ```  
 
-We coded many other groups of processors, for example GetMinimum() and GetMaximum() which both return a Number.
+Here is a global view of this example:
+<img src="images/groupprocessors.png"/>
+
+We coded many other groups of processors, for example GetMinValueFromJsonMap() and GetMaxValueFromJsonMap() which both return a Number.
 
 Now, feel free to create your own chains of processors to store or process your properties.
 
