@@ -2,10 +2,7 @@ import argparse
 import json
 import os
 import pathlib
-import pickle
-import subprocess
-import sys
-
+import importlib
 import logging
 from concurrent.futures.thread import ThreadPoolExecutor
 import time
@@ -15,7 +12,7 @@ from datetime import datetime
 from utils.server.Client import Client
 from beamngpy import BeamNGpy
 
-logging.basicConfig(level=logging.DEBUG)
+
 output_path = None
 now = datetime.now()
 
@@ -36,7 +33,7 @@ def create_id_name(car_id):
 
 def send_data(car, sock):
     for _ in range(args.time):
-        time.sleep(0.1)
+        time.sleep(args.delay / 1000.0) # Convert our delay (ms) to seconds
         car.update_vehicle()  # Synchs the vehicle's "state" variable with the simulator
         sensors = beamng_instance.poll_sensors(car)  # Polls the data of all sensors attached to the vehicle
         sock.send_packet(sensors)
@@ -73,11 +70,13 @@ def validate_output(id):
 def parser_config():
     parser = argparse.ArgumentParser(description='Listen to a BeamNG scenario given.')
 
-    parser.add_argument('--interval', type=int,
-                        help='Number of snapshots wanted per seconds (default is 10)')
+    parser.add_argument('--debug', action='store_true', help='Activate debug output')
 
     parser.add_argument('--time', type=int,
-                        help='Time of the s')
+                        help='Number of snapshots wanted per seconds (default is 60)')
+
+    parser.add_argument('--delay', type=int,
+                        help='Delay of transmitting the snapshots in milliseconds (default is 100)')
 
     # Optional, by default is 8080.
     parser.add_argument('--port', type=int,
@@ -91,11 +90,14 @@ def parser_config():
 
     args = parser.parse_args()
 
-    if args.interval is None:
-        args.port = 10
+    if args.delay is None:
+        args.delay = 100
+
+    if args.debug is True:
+        logging.basicConfig(level=logging.DEBUG)
 
     if args.time is None:
-        args.time = 240
+        args.time = 60
 
     if args.port is None:
         args.port = 8080
@@ -112,28 +114,21 @@ if __name__ == "__main__":
     # A dict that contains the vehicle, sensors and socket from a vehicle associated to his vid (id basically)
     vehicle_dict = dict()
 
-    # Call the scenario script given in args
-    p = subprocess.Popen([sys.executable, args.scenario], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = p.communicate()
-    print(stderr.decode())
-    # Loads the scenario
-    scenario = pickle.loads(stdout)
+    import_scenario = importlib.import_module('utils.scenario.{}'.format(args.scenario))
+    import_scenario.ConfigScenario.run()
 
     # Get instance of current scenario
-    beamng_instance = BeamNGpy('localhost', 64256)  # This is the host & port used to communicate over
-    beamng_instance.connect()
+    beamng_instance = import_scenario.ConfigScenario.get_beamng_instance()
+    scenario = import_scenario.ConfigScenario.get_scenario()
+    logging.debug(scenario.name)
 
     # For each vehicle that has been found, initiate a connection to the server
     for vehicle in scenario.vehicles:
         socket = Client("localhost", args.port)
         socket.open()
-
-        vehicle.connect(bng=beamng_instance)
         vehicle_dict[vehicle.vid] = {"vehicle": vehicle, "socket": socket}
 
-    beamng_instance.start_scenario()  # After loading, the simulator waits for further input to actually start
-    logging.debug(beamng_instance.get_scenario_name())
-    logging.debug(scenario.vehicles)
+    beamng_instance.start_scenario()
 
     # Sending all vehicles data to server
     with ThreadPoolExecutor() as executor:

@@ -2,20 +2,20 @@ package beepbeep.functions.parsers;
 
 import ca.uqac.lif.cep.functions.UnaryFunction;
 import ca.uqac.lif.json.JsonElement;
+import ca.uqac.lif.json.JsonMap;
 import ca.uqac.lif.json.JsonPath;
 
-public class JsonMapToJsonProperty extends UnaryFunction<JsonElement, JsonElement>
-{
+public class JsonMapToJsonProperty extends UnaryFunction<JsonMap, JsonElement> {
 
     private final String jsonPath;
 
     public JsonMapToJsonProperty(String jsonPath) {
-        super(JsonElement.class, JsonElement.class);
+        super(JsonMap.class, JsonElement.class);
         this.jsonPath = jsonPath;
     }
 
     @Override
-    public JsonElement getValue(JsonElement jsonMap) {
+    public JsonElement getValue(JsonMap jsonMap) {
         return JsonPath.get(jsonMap, jsonPath);
     }
 
