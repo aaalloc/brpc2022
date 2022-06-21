@@ -12,9 +12,7 @@
 <details>    
   <summary>Table of Contents</summary>    
   <ol>    
-    <li>    
-      <a href="#about-the-project">About The Project</a>    
-    </li>    
+    <li><a href="#about-the-project">About The Project</a></li>    
     <li>    
       <a href="#getting-started">Getting Started</a>    
       <ul>    
@@ -22,39 +20,47 @@
         <li><a href="#prerequisites">Prerequisites</a></li>    
         <li><a href="#beamngpy">BeamNGPy</a></li>    
         <li><a href="#ide-configuration">IDE Configuration</a></li>    
-            <ul>    
-           <li><a href="#intellij">IntelliJ</a></li>    
-           </ul>    
-           <ul>    
-           <li><a href="#python-module">Python module</a></li>    
-           </ul>    
+        <ul>    
+          <li><a href="#intellij">IntelliJ</a></li>
+          <li><a href="#python-module">Python module</a></li>    
+        </ul>    
       </ul>    
     </li>    
     <li><a href="#usage">Usage</a></li>    
-         <ul>    
-       <li><a href="#write-your-own-scenario">Write your own scenario</a></li>    
-        <li><a href="#start-your-own-scenario">Start your own scenario</a></li>    
-        <ul>
-                <li><a href="#server-side">Server side</a></li>    
-                 <li><a href="#client-side">Client side</a></li>    
-       </ul>
-     </ul>  
-        <li><a href="#contact">Explanation</a></li>  
-    <li><a href="#contact">Contact</a></li>    
+    <ul>    
+      <li><a href="#write-your-own-scenario">Write your own scenario</a></li>    
+      <li><a href="#start-your-own-scenario">Start your own scenario</a></li>    
+      <ul>
+        <li><a href="#server-side">Server side</a></li>    
+        <li><a href="#client-side">Client side</a></li>    
+      </ul>
+      <li><a href="#the-vehicles-sensors">The vehicles' sensors</a></li>
+      <li><a href="#beepbeep3s-starter-pack">BeepBeep 3's starter pack</a></li>
+      <ul>
+        <li><a href="#reading-incoming-packets">Reading incoming sockets</a></li>
+        <li><a href="#getting-a-jsonmap-from-a-string">Getting a JsonMap from a String</a></li>
+        <li><a href="#getting-a-property-from-a-jsonmap">Getting a property from a JsonMap</a></li>
+        <li><a href="#grouping-processors">Grouping processors</a></li>
+        <li><a href="#the-limits-of-beepbeep3">/!\ The limits of BeepBeep3 /!\</a></li>
+      </ul>
+    </ul>
+    <li><a href="#contact-us">Contact us</a></li>    
   </ol>    
 </details>    
 
 
-
+<a id="about-the-project"></a>
 # About The Project
 This project consists in being a use case of BeepBeep 3's Event Stream Processing with BeamNG.
 
-
+<a id="getting-started"></a>
 # Getting Started
 
+<a id="note"></a>
 ## Note
 We highly suggest you to use [IntelliJ](https://www.jetbrains.com/idea/) with [Python plugin](https://plugins.jetbrains.com/plugin/631-python) if you want to use this in the most efficient way.
 
+<a id="prerequisites"></a>
 ## Prerequisites
 * Windows 10 (BeamNG doesn't seem to work on Linux)
 
@@ -64,6 +70,7 @@ We highly suggest you to use [IntelliJ](https://www.jetbrains.com/idea/) with [P
 
 * BeamNG.tech license (_you can ask for yours [here](https://register.beamng.tech/)_)
 
+<a id="beamngpy"></a>
 ## BeamNGPy
 To use BeamNGPy library, you need to configure your workspace (the path where BeamNG is located),
 - __Via Global environment variables__
@@ -76,11 +83,14 @@ To use BeamNGPy library, you need to configure your workspace (the path where Be
   and Voilà !
 
 
-
+<a id="ide-configuration"></a>
 ## IDE Configuration
+
+<a id="intellij"></a>
 ### IntelliJ
 You simply have to clone the repo, open the folder in Intellij and wait for gradle to finish building. You're almost done.
 
+<a id="python-module"></a>
 #### Python module
 Intellij has a wonderful Python plugin which includes a nice workflow (instead of using PyCharm, you now use only one IDE). To set this up, follow the instructions below:
 
@@ -97,12 +107,14 @@ Intellij has a wonderful Python plugin which includes a nice workflow (instead o
 
 __GIF TO SHOW THE PROCESS__
 
+<a id="usage"></a>
 # Usage
 
 With BeamNGPy, you can write your own customizable scenario, here are some [example](https://github.com/BeamNG/BeamNGpy/blob/dev/examples/guide.md) to illustrate what you can do with BeamNGPy.
 
 What we have done here is that a listener will execute the scenario that you have written, and will get all the data from the current vehicles that you created during the simulation with a given duration.
 
+<a id="write-your-own-scenario"></a>
 ## Write your own scenario
 We have made a scenario template, in ``main/python/src/utils/scenario`` called ``scenario_example.py``. The most important method here is the ``run`` function.  Here's an example of what should be written in here:
 
@@ -142,7 +154,11 @@ cls.beamng_instance.load_scenario(cls.scenario)
 ```
 Otherwise, nothing will work.
 
+
+<a id="start-your-own-scenario"></a>
 ## Start your own scenario
+
+<a id="server-side"></a>
 ### Server side
 First of all, you need to start the Server, for that you have two options:
 
@@ -159,6 +175,7 @@ First of all, you need to start the Server, for that you have two options:
 
 The server is now running and waiting for a connection.
 
+<a id="client-side"></a>
 ### Client side
 To start your scenario, you will have to use the script ``listener.py`` present in ``main/python/src``. You can use the option ``--help`` to know what parameters you can give:
 ```
@@ -196,6 +213,7 @@ Example of what the json looks like in this case:
 }
 ```
 
+<a id="the-vehicles-sensors"></a>
 ## The vehicles' sensors
 In order to analyze the vehicles' data, you'll have to know what you're looking for first.  
 Each vehicle has its own set of sensors, producing values that we will call "properties" from now on. These properties may change during the simulation.
@@ -203,13 +221,14 @@ Each vehicle has its own set of sensors, producing values that we will call "pro
 You can find a list of existing properties related to a vehicle's state [here](https://github.com/BeamNG/BeamNGpy/blob/0f25ee8d047e787240fa624ddfa3f9d54addf0ca/src/beamngpy/vehicle.py#L116-L133), and most importantly the "electrics" properties [here](https://github.com/BeamNG/BeamNGpy/blob/3009c6f80045f05ca78a376d7c4d0bcf416e9316/src/beamngpy/sensors.py#L978-L1050).
 These are the values that the json sent through sockets will contain. You will find below a tutorial on how to use BeepBeep to interpret them.
 
+<a id="beepbeep3s-starter-pack"></a>
 ## BeepBeep 3's starter pack
 
 Assuming you're done with setting up the project and with sending the sockets from the client, you will now learn how to read and interpret a vehicle's properties by using BeepBeep.
 
 First of all, you may want to check out BeepBeep's official resources, including:  its [website](http://liflab.github.io/beepbeep-3/), its [official documentation](https://liflab.gitbook.io/event-stream-processing-with-beepbeep-3/)  and its [API javadoc](https://liflab.github.io/beepbeep-3/javadoc/index.html).
 
-
+<a id="reading-incoming-packets"></a>
 ### Reading incoming sockets
 If you haven't already, please have a look at the [Processors' documentation](https://liflab.gitbook.io/event-stream-processing-with-beepbeep-3/basic#processors).
 
@@ -220,7 +239,8 @@ If no data is available, this means that the simulation has ended and that the s
 Now, you have a processor which **COULD** read the sockets, get the JSON-string and transfer it to the next processor in the chain, **if another processor asks it to**.  
 The problem is that no one does.
 
-### Getting a JsonMap to read the wanted properties from
+<a id="getting-a-jsonmap-from-a-string"></a>
+### Getting a JsonMap from a String
 What you'll have to do now, is to set up a [Pump](https://liflab.gitbook.io/event-stream-processing-with-beepbeep-3/advanced#pumps-and-tanks) processor, which will request the current JSON-string to the SocketReader you just set up, with a constant delay which should preferably be the same as the one with which you're sending the sockets. When the pump gets the requested string, it will push it until the end of the processors' chain.
 
 The pump being in place, you will be able to retrieve a String. But, what you want is to get a specific property.  
@@ -230,7 +250,8 @@ An ApplyFunction needs to be given a function (which will return an output based
 In our case, the function takes a String as input and returns a JsonElement (which is a superclass of JsonMap, and which could also represent a property).  
 We now have our JsonMap object.
 
-### Getting a property from our JsonMap
+<a id="getting-a-property-from-a-jsonmap"></a>
+### Getting a property from a JsonMap
 Imagine you want to get many properties, and process them differently.  
 For example, let's say you want to get the "wheelspeed" property, which is a number, and the "lowfuel" property, which is a boolean (both of them are in the "electrics" sensors).
 
@@ -238,7 +259,8 @@ Since the JSON-string of a vehicle stores all the vehicle's properties, you don'
 To do that, you'll have to use a [Fork](https://liflab.gitbook.io/event-stream-processing-with-beepbeep-3/core#forking-a-stream) processor, with an output arity of 2 (this will depend on the number of properties you want to analyze).  
 Now, you have two outputs with the same JsonMap that you can treat differently.
 
-#### Group Processors
+<a id="grouping-processors"></a>
+#### Grouping processors
 First, have a look at [BeepBeep's grouping processors documentation](https://liflab.gitbook.io/event-stream-processing-with-beepbeep-3/core#grouping-processors).  We coded three main groups of processors, the first one being GetBooleanFromJsonMap, the second one being GetNumberFromJsonMap and the last one being GetStringFromJsonMap (this one isn't used at the moment since the sensors only return numbers/booleans).  
 These will allow you to get a property, depending on its type (whether it's a boolean/number/string), directly from the JsonElement representing the map.  
 How they work is: you give them the path of the property (in the json map), it parses the element (the same way we did to parse the string to a map, except we changed the parameter function given to our ApplyFunction) to what you want and returns its value.
@@ -260,6 +282,7 @@ We coded many other groups of processors, for example GetMinValueFromJsonMap() a
 
 Now, feel free to create your own chains of processors to store or process your properties.
 
+<a id="the-limits-of-beepbeep3"></a>
 ### /!\ The limits of BeepBeep3 /!\
 While we were working on this project, we noticed that a BeamNG scenario can contain several vehicles.
 However, you will not be able to use BeepBeep to analyze the properties of many vehicles at the same time, or at least not "properly".
@@ -270,9 +293,10 @@ You would have to use the main thread and sort the cars yourself, by giving them
 
 This is why we made 2 branches on this repository.
 The first one being "single-thread-analysis", which is made for a single car in the scenario (or you'll have to make an identifier as said before),
-the second one being "multithreaded-analysis", which CANNOT be used for now. It should only be used in the event of a full rewrite of BeepBeep.
+the second one being "multithreaded-analysis", which **CANNOT** be used for now. It should only be used in the event of a full rewrite of BeepBeep.
+Please note that the Server class made for multithreading has a thread pool with a size of 10, which you may want to change.
 
-<!-- CONTACT -->
+<a id="contact-us"></a>
 # Contact us
 
 _Alexander Yanovskyy_ - contact@yanovskyy.com    
