@@ -23,7 +23,7 @@ public class Server{
         try{
             server =  new ServerSocket(port);
         } catch (Exception e){
-            e.getStackTrace();
+            e.printStackTrace();
         }
     }
 
