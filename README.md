@@ -103,7 +103,6 @@ Intellij has a wonderful Python plugin which includes a nice workflow (instead o
 9. Django framework is detected, uncheck if you don't want to use it in the project (we don't use it, so we suggest you to uncheck it), and click __Create__    
    Now the python folder is considered as a Python module, but you have to select the SDK that you created just before for the python module, apply and everything is good to go. We propose you to restart your IDE and now normally everything should be set up correctly.
 
-__GIF TO SHOW THE PROCESS__
 
 <a id="usage"></a>
 # Usage
