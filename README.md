@@ -4,9 +4,7 @@
   <p>    
     Event Stream Processing with BeepBeep3 and BeamNG.    
     <br />    
-    <a href="https://github.com/github_username/repo_name">View Demo</a>    
-    ·    
-    <a href="https://github.com/github_username/repo_name/issues">Report Bug</a>    
+    <a href="https://www.youtube.com/watch?v=g9Knivxg6CA">View Demo</a>     
   </p>  
 
 <details>    
