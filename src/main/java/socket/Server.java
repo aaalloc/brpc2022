@@ -1,4 +1,5 @@
 package socket;
+
 import beepbeep.BeepBeepAnalysis;
 
 import java.io.IOException;
@@ -7,7 +8,7 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Server{
+public class Server {
 
     private final long interval;
     private ServerSocket server = null;
@@ -15,15 +16,15 @@ public class Server{
 
     /**
      * Create a Server socket with a port
+     *
      * @param port : Port of the server.
      */
-    public Server(int port, long interval)
-    {
+    public Server(int port, long interval) {
         this.interval = interval;
-        try{
-            server =  new ServerSocket(port);
-        } catch (Exception e){
-            e.getStackTrace();
+        try {
+            server = new ServerSocket(port);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -39,7 +40,7 @@ public class Server{
             client = server.accept();
             System.out.printf("Connection from %s on %d port\n%n", client.getInetAddress().getHostAddress(), client.getLocalPort());
         } catch (IOException e) {
-            if(server.isClosed()) {
+            if (server.isClosed()) {
                 System.out.println("Server Stopped.");
                 return null;
             }
@@ -53,7 +54,7 @@ public class Server{
         Socket client;
         while ((client = waitConnection()) != null) {
             this.threadPool.execute(
-                new BeepBeepAnalysis(this.interval, client, this.server)
+                    new BeepBeepAnalysis(this.interval, client, this.server)
             );
         }
         this.threadPool.shutdownNow();
