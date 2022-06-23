@@ -168,7 +168,6 @@ First of all, you need to start the Server, for that you have two options:
 
 - __Using the IDE (IntelliJ)__
   Open ``Run/Debug Configuration`` (just beside the green play button, add new configuration by choosing Gradle, choose the brpc2022 folder and simply write in task category `run --args="8080 100"`. For more inside, have a look at [IntelliJ documentation](https://www.jetbrains.com/help/idea/run-debug-gradle.html).
-  __GIF TO SHOW PROCESS__
 
 The server is now running and waiting for a connection.
 
@@ -229,7 +228,7 @@ First of all, you may want to check out BeepBeep's official resources, including
 ### Reading incoming sockets
 If you haven't already, please have a look at the [Processors' documentation](https://liflab.gitbook.io/event-stream-processing-with-beepbeep-3/basic#processors).
 
-To read incoming sockets, you will have to create a new [Source](https://liflab.gitbook.io/event-stream-processing-with-beepbeep-3/dictionary#source) object (since it has no input stream), which we called "SocketReader" (you can find the code [here](https://github.com/Siirko/brpc2022/blob/single-thread-analysis/src/main/java/beepbeep/processors/SocketReader.java)), with an output arity of 1.  
+To read incoming sockets, you will have to create a new [Source](https://liflab.gitbook.io/event-stream-processing-with-beepbeep-3/dictionary#source) object (since it has no input stream), which we called "SocketReader" (you can find the code [here](https://github.com/Siirko/brpc2022/blob/main/src/main/java/beepbeep/processors/SocketReader.java)), with an output arity of 1.  
 Then, you'll have to override its compute() method, and add the JSON you've just read, as a string, to the outputs Queue object.  
 If no data is available, this means that the simulation has ended and that the server should be closed.
 
@@ -258,7 +257,7 @@ Now, you have two outputs with the same JsonMap that you can treat differently.
 
 <a id="grouping-processors"></a>
 #### Grouping processors
-First, have a look at [BeepBeep's grouping processors documentation](https://liflab.gitbook.io/event-stream-processing-with-beepbeep-3/core#grouping-processors).  We coded three main groups of processors, the first one being [GetBooleanFromJsonMap](https://github.com/Siirko/brpc2022/blob/single-thread-analysis/src/main/java/beepbeep/processors/groupprocessors/basics/GetBooleanFromJsonMap.java), the second one being [GetNumberFromJsonMap](https://github.com/Siirko/brpc2022/blob/single-thread-analysis/src/main/java/beepbeep/processors/groupprocessors/basics/GetNumberFromJsonMap.java) and the last one being [GetStringFromJsonMap](https://github.com/Siirko/brpc2022/blob/single-thread-analysis/src/main/java/beepbeep/processors/groupprocessors/basics/GetStringFromJsonMap.java) (this one isn't used at the moment since the sensors only return numbers/booleans).  
+First, have a look at [BeepBeep's grouping processors documentation](https://liflab.gitbook.io/event-stream-processing-with-beepbeep-3/core#grouping-processors).  We coded three main groups of processors, the first one being [GetBooleanFromJsonMap](https://github.com/Siirko/brpc2022/blob/main/src/main/java/beepbeep/processors/groupprocessors/basics/GetBooleanFromJsonMap.java), the second one being [GetNumberFromJsonMap](https://github.com/Siirko/brpc2022/blob/main/src/main/java/beepbeep/processors/groupprocessors/basics/GetNumberFromJsonMap.java) and the last one being [GetStringFromJsonMap](https://github.com/Siirko/brpc2022/blob/main/src/main/java/beepbeep/processors/groupprocessors/basics/GetStringFromJsonMap.java) (this one isn't used at the moment since the sensors only return numbers/booleans, and consequently has not been tested).  
 These will allow you to get a property, depending on its type (whether it's a boolean/number/string), directly from the JsonElement representing the map.  
 How they work is: you give them the path of the property (in the json map), it parses the element (the same way we did to parse the string to a map, except we changed the parameter function given to our ApplyFunction) to what you want and returns its value.
 
@@ -275,7 +274,7 @@ Connector.connect(fork, 1, getLowFuel, 0);
 Here is a global view of this example:
 <img src="images/groupprocessors.png"/>
 
-We coded many other groups of processors, for example [GetMinValueFromJsonMap()](https://github.com/Siirko/brpc2022/blob/single-thread-analysis/src/main/java/beepbeep/processors/groupprocessors/processing/number/GetMinValueFromJsonMap.java) and [GetMaxValueFromJsonMap()](https://github.com/Siirko/brpc2022/blob/single-thread-analysis/src/main/java/beepbeep/processors/groupprocessors/processing/number/GetMaxValueFromJsonMap.java) which both return a Number.
+We coded a few groups of processors, for example [GetMinValueFromJsonMap()](https://github.com/Siirko/brpc2022/blob/main/src/main/java/beepbeep/processors/groupprocessors/processing/number/GetMinValueFromJsonMap.java) and [GetMaxValueFromJsonMap()](https://github.com/Siirko/brpc2022/blob/main/src/main/java/beepbeep/processors/groupprocessors/processing/number/GetMaxValueFromJsonMap.java) which both return a Number.
 
 Now, feel free to create your own chains of processors to store or process your properties.
 
@@ -288,10 +287,7 @@ BeepBeep was created and coded in a way that doesn't allow multithreading (we th
 This means that if you would like to use 2 cars in a scenario, you couldn't analyze each car's properties in its own thread containing a chain of processors.
 You would have to use the main thread and sort the cars yourself, by giving them an identifier in the JSON-string.
 
-This is why we made 2 branches on this repository.
-The first one being [single-thread-analysis](https://github.com/Siirko/brpc2022/tree/single-thread-analysis), which is made for a single car in the scenario (or you'll have to make an identifier as said before),
-the second one being [multithreaded-analysis](https://github.com/Siirko/brpc2022/tree/multithreaded-analysis), which **CANNOT** be used for now. It should only be used in the event of a full rewrite of BeepBeep.
-Please note that the Server class made for multithreading has a thread pool with a size of 10, which you may want to change.
+The current code should allow you to use multithreading in the event of a full rewrite of BeepBeep, but for now we strongly advise you to use a single car in your scenarios.
 
 <a id="contact-us"></a>
 # Contact us
